@@ -15,13 +15,14 @@ class PostgresSettings(BaseSettings):
 
     @computed_field
     @property
-    def database_url(self) -> str:
+    def database_url(self) -> PostgresDsn:
         return PostgresDsn.build(
             scheme="postgresql+asyncpg",
             username=self.user,
             password=self.password.get_secret_value(),
             host=self.host,
             port=self.port,
+            path=self.db,
         )
 
 
