@@ -6,6 +6,8 @@ services:
     command: uv run uvicorn app.main:app --host 0.0.0.0 --reload
     env_file:
       - .env
+    environment:
+      - POSTGRES_HOST=db
     depends_on:
       db:
         condition: service_healthy
@@ -25,8 +27,6 @@ services:
       start_period: 5s
     env_file:
       - .env
-    environment:
-      - POSTGRES_HOST=db
     volumes:
       - postgres_data:/var/lib/postgresql
 

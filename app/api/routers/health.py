@@ -15,7 +15,7 @@ async def healthz():
 @health_router.get("/readyz")
 async def readyz(session: SessionDep):
     try:
-        session.execute(text("SELECT 1"))
+        await session.execute(text("SELECT 1"))
     except Exception as exc:
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE)
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE) from exc
     return {"status": "ok"}
