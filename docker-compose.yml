@@ -7,7 +7,9 @@ services:
     env_file:
       - .env
     depends_on:
-      - db
+      db:
+        condition: service_healthy
+        restart: true
     volumes:
       - ./app:/app/app
     develop:
@@ -30,9 +32,10 @@ services:
       - "5432:5432"
     healthcheck:
       test: pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}
-      interval: 1m
-      timeout: 20s
-      retries: 3
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
     env_file:
       - .env
     volumes:

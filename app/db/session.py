@@ -1,16 +1,15 @@
-from typing import Annotated
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
-from fastapi import Depends
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from app.config import get_db_settings
 
-from app.config import PostgresSettings, get_db_settings
+settings = get_db_settings()
 
 
-def get_db_url(url: Annotated[PostgresSettings, Depends(get_db_settings)]):
-    return url
+engine = create_async_engine(url=str(settings.database_url))
+
+async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
 
-engine = create_engine(url=get_db_url())
-
-Session = sessionmaker(engine)
+async def get_session():
+    async with async_session_maker() as session:
+        yield session
