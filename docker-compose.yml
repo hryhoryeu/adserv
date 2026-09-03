@@ -12,19 +12,6 @@ services:
         restart: true
     volumes:
       - ./app:/app/app
-    develop:
-      watch:
-        - action: sync
-          path: ./app
-          target: /app/app
-          ignore:
-            - .git
-            - .venv
-            - __pycache__
-        - action: rebuild
-          path: ./pyproject.toml
-        - action: rebuild
-          path: ./uv.lock
 
   db:
     image: postgres:18
@@ -38,6 +25,8 @@ services:
       start_period: 5s
     env_file:
       - .env
+    environment:
+      - POSTGRES_HOST=db
     volumes:
       - postgres_data:/var/lib/postgresql
 

@@ -1,18 +1,21 @@
-from typing import Annotated
-
-from fastapi import Depends
+from fastapi import HTTPException, status
 from fastapi.routing import APIRouter
+from sqlalchemy import text
 
-from app.config import PostgresSettings, get_db_settings
+from app.api.deps import SessionDep
 
 health_router = APIRouter()
 
 
 @health_router.get("/healthz")
 async def healthz():
-    return {"msg": "healthz"}
+    return {"status": "ok"}
 
 
 @health_router.get("/readyz")
-async def readyz(settings: Annotated[PostgresSettings, Depends(get_db_settings)]):
-    return {"msg": "readyz"}
+async def readyz(session: SessionDep):
+    try:
+        session.execute(text("SELECT 1"))
+    except Exception as exc:
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE)
+    return {"status": "ok"}
