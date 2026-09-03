@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  adserv:
+    build: .
+    container_name: adserv
+    ports:
+      - "8000:8000"
+    command: uv run fastapi dev
+
+  db:
+    image: postgres:18
+    container_name: postgres-dev
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
+    volumes:
+      - postgres_data:/var/lib/postgresql
+
+volumes:
+  postgres_data:

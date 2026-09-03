@@ -1,0 +1,17 @@
+version: '3.8'
+services:
+  adserv:
+    build: .
+    container_name: adserv
+    ports:
+      - "8000:8000"
+    environment:
+      - UV_NO_DEV=1
+    command: uv run --host
+
+  postgres:
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    env_file:
+      - .env
