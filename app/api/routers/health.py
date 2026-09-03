@@ -1,12 +1,16 @@
-from app.config import config
-from app.main import app
+from fastapi.routing import APIRouter
+
+from app.config import get_db_settings
+
+settings = get_db_settings()
+health_router = APIRouter()
 
 
-@app.get("/healthz")
+@health_router.get("/healthz")
 async def healthz():
-    return {"msg": f"healthz. {config.database_url}"}
+    return {"msg": f"healthz. {settings.database_url}"}
 
 
-@app.get("/readyz")
+@health_router.get("/readyz")
 async def readyz():
     return {"msg": "readyz"}

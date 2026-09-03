@@ -5,8 +5,20 @@ services:
     container_name: adserv
     ports:
       - "8000:8000"
-    command: uv run fastapi dev --host 0.0.0.0
-
+    command: uv run fastapi dev --host 0.0.0.0 --reload
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /app/app
+          ignore:
+            - .git
+            - .venv
+            - __pycache__
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
   db:
     image: postgres:18
     container_name: postgres-dev
