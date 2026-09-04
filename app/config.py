@@ -1,31 +1,29 @@
 from functools import lru_cache
+from typing import Literal
 
-from pydantic import PostgresDsn, SecretStr, computed_field
+from pydantic import BaseModel, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-class PostgresSettings(BaseSettings):
-    model_config = SettingsConfigDict(env_file=".env", env_prefix="POSTGRES_")
-
+class DatabaseSettings(BaseModel):
     user: str
     password: SecretStr
     host: str = "localhost"
     port: int = 5432
     db: str
+    # echo: bool = bool
 
-    @computed_field
-    @property
-    def database_url(self) -> PostgresDsn:
-        return PostgresDsn.build(
-            scheme="postgresql+asyncpg",
-            username=self.user,
-            password=self.password.get_secret_value(),
-            host=self.host,
-            port=self.port,
-            path=self.db,
-        )
+
+class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=".env", env_nested_delimiter="__", extra="ignore"
+    )
+
+    env: Literal["prod", "docker", "local"]
+    debug: bool = False
+    db: DatabaseSettings
 
 
 @lru_cache
 def get_db_settings():
-    return PostgresSettings()
+    return Settings()
