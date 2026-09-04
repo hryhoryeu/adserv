@@ -7,7 +7,12 @@ services:
     env_file:
       - .env
     environment:
-      - POSTGRES_HOST=db
+      - DB__HOST=db
+      - DB__PORT=${POSTGRES_PORT}
+      - DB__USER=${POSTGRES_USER}
+      - DB__PASSWORD=${POSTGRES_PASSWORD}
+      - DB__DB=${POSTGRES_DB}
+      - ENV=local
     depends_on:
       db:
         condition: service_healthy
