@@ -8,11 +8,10 @@ services:
       - .env
     environment:
       - DB__HOST=db
-      - DB__PORT=${POSTGRES_PORT}
       - DB__USER=${POSTGRES_USER}
       - DB__PASSWORD=${POSTGRES_PASSWORD}
       - DB__DB=${POSTGRES_DB}
-      - ENV=local
+      - ENV=docker
     depends_on:
       db:
         condition: service_healthy
