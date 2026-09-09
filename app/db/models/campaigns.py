@@ -23,7 +23,7 @@ class Campaign(Base):
         CheckConstraint("daily_budget > 0", name="daily_budget_positive"),
         CheckConstraint("ends_at IS NULL OR ends_at > starts_at", name="valid_period"),
         CheckConstraint(
-            "status::text = ANY (ARRAY['draft'::character varying, 'active'::character varying, 'paused'::character varying, 'archived'::character varying]::text[])",
+            "status IN ({})".format(", ".join(f"'{s.value}'" for s in CampaignStatus)),
             name="valid_status",
         ),
     )
