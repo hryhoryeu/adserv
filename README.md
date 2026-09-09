@@ -28,3 +28,11 @@ create new revision
 ```bash
 uv run alembic revision --autogenerate -m "{message}"
 ```
+update to the current revision
+```bash
+alembic upgrade head
+```
+check current revision
+```bash
+alembic current
+```
