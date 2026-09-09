@@ -1,14 +1,14 @@
 from collections.abc import AsyncGenerator
 
-from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-
-from app.config import get_database_url
-
-engine = create_async_engine(url=get_database_url())
-
-async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
+from fastapi import Request
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
-async def get_session() -> AsyncGenerator[AsyncSession, None]:
-    async with async_session_maker() as session:
-        yield session
+async def get_session(request: Request) -> AsyncGenerator[AsyncSession, None]:
+    async with request.state.session_maker() as session:
+        try:
+            yield session
+            await session.commit()
+        except:
+            await session.rollback()
+            raise
