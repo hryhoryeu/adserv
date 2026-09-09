@@ -1,8 +1,8 @@
 """initial
 
-Revision ID: 1da318e263af
+Revision ID: 58f9779e1c23
 Revises:
-Create Date: 2026-09-09 14:47:24.215773
+Create Date: 2026-09-09 15:05:40.843537
 
 """
 
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 from alembic import op
 
 # revision identifiers, used by Alembic.
-revision: str = "1da318e263af"
+revision: str = "58f9779e1c23"
 down_revision: str | Sequence[str] | None = None
 branch_labels: str | Sequence[str] | None = None
 depends_on: str | Sequence[str] | None = None
@@ -45,9 +45,8 @@ def upgrade() -> None:
                 "active",
                 "paused",
                 "archived",
-                name="ck_campaign_status",
+                name="campaignstatus",
                 native_enum=False,
-                create_constraint=True,
             ),
             nullable=False,
         ),
@@ -65,6 +64,10 @@ def upgrade() -> None:
             sa.TIMESTAMP(timezone=True),
             server_default=sa.text("now()"),
             nullable=False,
+        ),
+        sa.CheckConstraint(
+            "status::text = ANY (ARRAY['draft'::character varying, 'active'::character varying, 'paused'::character varying, 'archived'::character varying]::text[])",
+            name=op.f("ck_campaign_valid_status"),
         ),
         sa.CheckConstraint(
             "daily_budget > 0", name=op.f("ck_campaign_daily_budget_positive")

@@ -16,8 +16,24 @@ services:
       db:
         condition: service_healthy
         restart: true
+      migrate:
+        condition: service_completed_successfully
     volumes:
       - ./app:/app/app
+
+  migrate:
+    build: .
+    command: uv run alembic upgrade head
+    env_file:
+      - .env
+    environment:
+      - DB__HOST=db
+      - DB__USER=${POSTGRES_USER}
+      - DB__PASSWORD=${POSTGRES_PASSWORD}
+      - DB__NAME=${POSTGRES_DB}
+    depends_on:
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:18

@@ -22,6 +22,10 @@ class Campaign(Base):
     __table_args__ = (
         CheckConstraint("daily_budget > 0", name="daily_budget_positive"),
         CheckConstraint("ends_at IS NULL OR ends_at > starts_at", name="valid_period"),
+        CheckConstraint(
+            "status::text = ANY (ARRAY['draft'::character varying, 'active'::character varying, 'paused'::character varying, 'archived'::character varying]::text[])",
+            name="valid_status",
+        ),
     )
 
     id: Mapped[uuid.UUID] = mapped_column(primary_key=True, default=uuid.uuid4)
@@ -33,8 +37,6 @@ class Campaign(Base):
         Enum(
             CampaignStatus,
             native_enum=False,
-            create_constraint=True,
-            name="ck_campaign_status",
             values_callable=lambda x: [e.value for e in x],
         ),
         default=CampaignStatus.DRAFT,
