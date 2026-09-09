@@ -12,7 +12,6 @@ class DatabaseSettings(BaseModel):
     host: str = "localhost"
     port: int = 5432
     name: str = "adserv"
-    # echo: bool = bool
 
 
 class Settings(BaseSettings):

@@ -10,7 +10,7 @@ services:
       - DB__HOST=db
       - DB__USER=${POSTGRES_USER}
       - DB__PASSWORD=${POSTGRES_PASSWORD}
-      - DB__DB=${POSTGRES_DB}
+      - DB__NAME=${POSTGRES_DB}
       - ENV=docker
     depends_on:
       db:
