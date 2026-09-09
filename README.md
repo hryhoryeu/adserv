@@ -23,3 +23,8 @@ rebuild docker conteiner after it so it can see the new dependencies
 docker compose up --build
 ```
 
+### transactions (alembic)
+create new revision
+```bash
+uv run alembic revision --autogenerate -m "{message}"
+```
