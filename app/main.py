@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.api.routers.check import check_router
 from app.api.routers.health import health_router
 from app.config import get_database_url, get_settings
-from app.core.middleware.request_id import RequestIDMiddleware, request_id_middleware
+from app.core.middleware.request_id import RequestIDMiddleware
 
 
 @asynccontextmanager
@@ -26,7 +26,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
 
 def create_app() -> FastAPI:
     app = FastAPI(lifespan=lifespan)
-    app.middleware("http")(request_id_middleware)
     app.add_middleware(RequestIDMiddleware)
     app.include_router(health_router)
     app.include_router(check_router)
