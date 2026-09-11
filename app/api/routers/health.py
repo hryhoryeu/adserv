@@ -1,13 +1,17 @@
+from logging import getLogger
+
 from fastapi import APIRouter, HTTPException, Request, status
 from sqlalchemy import text
 
 from app.api.deps import SessionDep
 
 health_router = APIRouter()
+logger = getLogger(__name__)
 
 
 @health_router.get("/healthz")
 async def healthz() -> dict:
+    logger.info({"all cool"})
     return {"status": "ok"}
 
 

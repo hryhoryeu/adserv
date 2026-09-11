@@ -15,6 +15,8 @@ services:
       - DB__USER=${POSTGRES_USER}
       - DB__PASSWORD=${POSTGRES_PASSWORD}
       - DB__NAME=${POSTGRES_DB}
+      - LOG__LEVEL=DEBUG
+      - LOG__FORMAT=json
       - ENV=docker
     depends_on:
       db:

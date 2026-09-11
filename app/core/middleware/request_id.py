@@ -1,8 +1,10 @@
 import uuid
+from contextvars import ContextVar
 
 from starlette.datastructures import MutableHeaders
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+request_id_var: ContextVar[str] = ContextVar("request_id", default="-")
 HEADER = "X-Request-ID"
 
 
@@ -19,6 +21,7 @@ class RequestIDMiddleware:
             uuid.uuid4()
         )  # we don't check for incoming since it can be compromised
         scope.setdefault("state", {})["request_id"] = request_id
+        request_id_var.set(request_id)
 
         async def send_wrapper(message: Message) -> None:
             if message["type"] == "http.response.start":

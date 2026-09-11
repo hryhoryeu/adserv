@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.api.routers.check import check_router
 from app.api.routers.health import health_router
 from app.config import get_database_url, get_settings
+from app.core.logger import setup_logging
 from app.core.middleware.request_id import RequestIDMiddleware
 
 
@@ -22,6 +23,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
         echo=settings.db.echo,
     )
     session_maker = async_sessionmaker(engine, expire_on_commit=False)
+    setup_logging(format=settings.logging.format, level=settings.logging.level)
     try:
         app.state.ready = True
         yield {"session_maker": session_maker}
