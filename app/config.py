@@ -12,6 +12,10 @@ class DatabaseSettings(BaseModel):
     host: str = "localhost"
     port: int = 5432
     name: str = "adserv"
+    pool_size: int = 5
+    max_overflow: int = 10
+    echo_pool: bool = False
+    echo: bool = False
 
 
 class Settings(BaseSettings):

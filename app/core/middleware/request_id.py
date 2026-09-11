@@ -15,13 +15,9 @@ class RequestIDMiddleware:
             await self.app(scope, receive, send)
             return
 
-        incoming = None
-        for name, value in scope["headers"]:
-            if name == b"x-request-id":
-                incoming = value.decode()
-                break
-
-        request_id = incoming or str(uuid.uuid4())
+        request_id = str(
+            uuid.uuid4()
+        )  # we don't check for incoming since it can be compromised
         scope.setdefault("state", {})["request_id"] = request_id
 
         async def send_wrapper(message: Message) -> None:

@@ -1,7 +1,7 @@
 import asyncio
 from collections.abc import AsyncGenerator
 
-from fastapi import APIRouter, Request, Response
+from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
 check_router = APIRouter()
@@ -14,10 +14,10 @@ async def _ticker() -> AsyncGenerator[bytes, None]:
 
 
 @check_router.get("/whoami")
-async def whoami(request: Request) -> Response:
+async def whoami(request: Request) -> dict:
     return {"header": request.state.request_id}
 
 
 @check_router.get("/stream")
-async def stream(request: Request) -> StreamingResponse:
+async def stream() -> StreamingResponse:
     return StreamingResponse(_ticker(), media_type="text/plain")

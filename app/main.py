@@ -13,8 +13,14 @@ from app.core.middleware.request_id import RequestIDMiddleware
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
     app.state.ready = False
-    get_settings()
-    engine = create_async_engine(url=get_database_url(), pool_size=5, max_overflow=10)
+    settings = get_settings()
+    engine = create_async_engine(
+        url=get_database_url(),
+        pool_size=settings.db.pool_size,
+        max_overflow=settings.db.max_overflow,
+        echo_pool=settings.db.echo_pool,
+        echo=settings.db.echo,
+    )
     session_maker = async_sessionmaker(engine, expire_on_commit=False)
     try:
         app.state.ready = True
