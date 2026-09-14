@@ -5,6 +5,7 @@ from logging import getLogger
 from fastapi import APIRouter, Request
 from fastapi.responses import StreamingResponse
 
+from app.core.errors.errors import AppError
 from app.core.middleware.request_id import request_id_var
 
 check_router = APIRouter()
@@ -29,7 +30,10 @@ async def stream() -> StreamingResponse:
 
 @check_router.get("/zero")
 async def zero():
-    return 0 / 0
+    try:
+        return 0 / 0
+    except ZeroDivisionError:
+        raise AppError()
 
 
 _background_tasks: set[asyncio.Task] = set()

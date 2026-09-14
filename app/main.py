@@ -7,6 +7,7 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.api.routers.check import check_router
 from app.api.routers.health import health_router
 from app.config import get_database_url, get_settings
+from app.core.errors import exception_handler
 from app.core.logger import setup_logging
 from app.core.middleware import RequestIDMiddleware, TimingMiddleware
 
@@ -34,6 +35,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
 
 def create_app() -> FastAPI:
     app = FastAPI(lifespan=lifespan)
+    app.add_exception_handler(Exception, exception_handler)
     app.add_middleware(TimingMiddleware)
     app.add_middleware(RequestIDMiddleware)
     app.include_router(health_router)
