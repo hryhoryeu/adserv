@@ -4,8 +4,9 @@ from contextvars import ContextVar
 from starlette.datastructures import MutableHeaders
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
+from app.core.middleware import headers
+
 request_id_var: ContextVar[str] = ContextVar("request_id", default="-")
-HEADER = "X-Request-ID"
 
 
 class RequestIDMiddleware:
@@ -25,7 +26,7 @@ class RequestIDMiddleware:
 
         async def send_wrapper(message: Message) -> None:
             if message["type"] == "http.response.start":
-                MutableHeaders(scope=message).append(HEADER, request_id)
+                MutableHeaders(scope=message).append(headers.X_REQUEST_ID, request_id)
             await send(message)
 
         await self.app(scope, receive, send_wrapper)

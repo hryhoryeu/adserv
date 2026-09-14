@@ -8,13 +8,14 @@ from app.api.routers.check import check_router
 from app.api.routers.health import health_router
 from app.config import get_database_url, get_settings
 from app.core.logger import setup_logging
-from app.core.middleware.request_id import RequestIDMiddleware
+from app.core.middleware import RequestIDMiddleware, TimingMiddleware
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
     app.state.ready = False
     settings = get_settings()
+    setup_logging(format=settings.logging.format, level=settings.logging.level)
     engine = create_async_engine(
         url=get_database_url(),
         pool_size=settings.db.pool_size,
@@ -23,7 +24,6 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
         echo=settings.db.echo,
     )
     session_maker = async_sessionmaker(engine, expire_on_commit=False)
-    setup_logging(format=settings.logging.format, level=settings.logging.level)
     try:
         app.state.ready = True
         yield {"session_maker": session_maker}
@@ -35,6 +35,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
 def create_app() -> FastAPI:
     app = FastAPI(lifespan=lifespan)
     app.add_middleware(RequestIDMiddleware)
+    app.add_middleware(TimingMiddleware)
     app.include_router(health_router)
     app.include_router(check_router)
     return app

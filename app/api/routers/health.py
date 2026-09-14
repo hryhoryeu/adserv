@@ -11,7 +11,7 @@ logger = getLogger(__name__)
 
 @health_router.get("/healthz")
 async def healthz() -> dict:
-    logger.info({"all cool"})
+    logger.info("all cool", extra={"tag": "healthz"})
     return {"status": "ok"}
 
 

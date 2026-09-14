@@ -1,31 +1,39 @@
 import json
-import logging
 from datetime import UTC, datetime
-from logging import Filter, Formatter
+from logging import Filter, Formatter, LogRecord
+from logging.config import dictConfig
 
 from app.core.middleware.request_id import request_id_var
 
+STANDART = set(LogRecord("", 0, "", 0, {}, None, None).__dict__) | {
+    "message",
+    "asctime",
+}
+
 
 class ContextFilter(Filter):
-    def filter(self, record):
+    def filter(self, record: LogRecord) -> bool:
         record.request_id = request_id_var.get()
-        return record
+        return True
 
 
 class JSONFormatter(Formatter):
-    def format(self, record):
+    def format(self, record: LogRecord) -> str:
         result = {
-            "ts": str(datetime.fromtimestamp(record.created, tz=UTC)),
+            "ts": datetime.fromtimestamp(record.created, tz=UTC).isoformat(),
             "level": record.levelname,
             "logger": record.name,
-            "msg": record.msg,
+            "msg": record.getMessage(),
             "request_id": record.request_id,
         }
-        return json.dumps(result)
+        result.update({k: v for k, v in record.__dict__.items() if k not in STANDART})
+        if exc_info := record.exc_info:
+            result["exc"] = self.formatException(exc_info)
+        return json.dumps(result, default=str)
 
 
-def setup_logging(level: str = "INFO", format: str = "plain") -> None:
-    logging.config.dictConfig(
+def setup_logging(level: str = "INFO", format: str = "console") -> None:
+    dictConfig(
         {
             "version": 1,
             "disable_existing_loggers": False,

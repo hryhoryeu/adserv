@@ -27,6 +27,11 @@ async def stream() -> StreamingResponse:
     return StreamingResponse(_ticker(), media_type="text/plain")
 
 
+@check_router.get("/zero")
+async def zero():
+    return 0 / 0
+
+
 _background_tasks: set[asyncio.Task] = set()
 
 
