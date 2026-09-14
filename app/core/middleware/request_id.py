@@ -1,12 +1,10 @@
 import uuid
-from contextvars import ContextVar
 
 from starlette.datastructures import MutableHeaders
 from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
-from app.core.middleware import headers
-
-request_id_var: ContextVar[str] = ContextVar("request_id", default="-")
+from app.core import headers
+from app.core.context_variables import request_id_var
 
 
 class RequestIDMiddleware:

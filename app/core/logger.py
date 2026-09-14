@@ -3,9 +3,9 @@ from datetime import UTC, datetime
 from logging import Filter, Formatter, LogRecord
 from logging.config import dictConfig
 
-from app.core.middleware.request_id import request_id_var
+from app.core.context_variables import request_id_var
 
-STANDART = set(LogRecord("", 0, "", 0, {}, None, None).__dict__) | {
+STANDARD = set(LogRecord("", 0, "", 0, {}, None, None).__dict__) | {
     "message",
     "asctime",
 }
@@ -26,7 +26,7 @@ class JSONFormatter(Formatter):
             "msg": record.getMessage(),
             "request_id": record.request_id,
         }
-        result.update({k: v for k, v in record.__dict__.items() if k not in STANDART})
+        result.update({k: v for k, v in record.__dict__.items() if k not in STANDARD})
         if exc_info := record.exc_info:
             result["exc"] = self.formatException(exc_info)
         return json.dumps(result, default=str)
@@ -43,7 +43,7 @@ def setup_logging(level: str = "INFO", format: str = "console") -> None:
             "formatters": {
                 "json": {"()": "app.core.logger.JSONFormatter"},
                 "console": {
-                    "format": "%(asctime)s %(levelname)-7s [%(request_id)-36s] %(name)s: %(msg)s"
+                    "format": "%(asctime)s %(levelname)-7s [%(request_id)-36s] [%(request_timing)-4s] %(name)s: %(msg)s"
                 },
             },
             "handlers": {

@@ -34,8 +34,8 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[dict, None]:
 
 def create_app() -> FastAPI:
     app = FastAPI(lifespan=lifespan)
-    app.add_middleware(RequestIDMiddleware)
     app.add_middleware(TimingMiddleware)
+    app.add_middleware(RequestIDMiddleware)
     app.include_router(health_router)
     app.include_router(check_router)
     return app
