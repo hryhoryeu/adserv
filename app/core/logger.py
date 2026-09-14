@@ -43,7 +43,7 @@ def setup_logging(level: str = "INFO", format: str = "console") -> None:
             "formatters": {
                 "json": {"()": "app.core.logger.JSONFormatter"},
                 "console": {
-                    "format": "%(asctime)s %(levelname)-7s [%(request_id)-36s] [%(request_timing)-4s] %(name)s: %(msg)s"
+                    "format": "%(asctime)s %(levelname)-7s [%(request_id)-36s] %(name)s: %(msg)s"
                 },
             },
             "handlers": {
